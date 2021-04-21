@@ -1,0 +1,16 @@
+django==2.2
+djangorestframework==3.11.1
+mysqlclient
+djoser
+markdown
+django-filter
+pygments
+django-cors-headers
+djangorestframework-simplejwt
+dynamic-rest
+django-safedelete
+django-import-export
+django-simple-history
+django-model-utils
+Pillow
+django-wkhtmltopdf
