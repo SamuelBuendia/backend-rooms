@@ -89,14 +89,14 @@ class UserProfileAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
 admin.site.register(UserProfile, UserProfileAdmin)
 
-## Employee
-class EmployeesResource(ModelResource):
+## Functionary
+class FunctionarysResource(ModelResource):
     class Meta:
-        model = Employee
+        model = Functionary
 
-class EmployeeAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
+class FunctionaryAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
     search_fields = ('name',)
     ordering = ('id',)
-    resource_class = EmployeesResource
+    resource_class = FunctionarysResource
 
-admin.site.register(Employee, EmployeeAdmin)
+admin.site.register(Functionary, FunctionaryAdmin)

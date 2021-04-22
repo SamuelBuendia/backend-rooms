@@ -32,7 +32,7 @@ class UserSerializer(DynamicModelSerializer):
     userprofile = DynamicRelationField('UserProfileSerializer', many=False)
     groups = DynamicRelationField('GroupSerializer', many=True)
     user_permissions = DynamicRelationField('PermissionSerializer', many=True)
-    employee = DynamicRelationField('EmployeeSerializer', many=True)
+    functionary = DynamicRelationField('FunctionarySerializer', many=True)
 
     class Meta:
         model = User
@@ -51,7 +51,7 @@ class UserSerializer(DynamicModelSerializer):
 
         validated_data.pop('groups')
         validated_data.pop('user_permissions')
-        validated_data.pop('employee')
+        validated_data.pop('functionary')
         validated_data.pop('userprofile')
         user = super().update(instance, validated_data)
         return user
@@ -67,9 +67,9 @@ class AuthTokenSerializer(TokenObtainPairSerializer):
         del data['refresh']
         return data
 
-## Employee
-class EmployeeSerializer(DynamicModelSerializer):
+## Functionary
+class FunctionarySerializer(DynamicModelSerializer):
     user = DynamicRelationField('UserSerializer', many=False)
     class Meta:
-        model = Employee
+        model = Functionary
         fields = '__all__'

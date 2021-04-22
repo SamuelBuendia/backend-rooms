@@ -27,11 +27,11 @@ router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'permissions', views.PermissionViewSet)
 router.register(r'usersprofile', views.UserProfileViewSet)
-router.register(r'employees', views.EmployeeViewSet, base_name='Employees')
+router.register(r'functionarys', views.FunctionaryViewSet, base_name='Functionarys')
 
 router.register(r'export/users', views.UserExportViewSet, base_name='Exportusers'),
 router.register(r'export/permissions', views.PermissionExportViewSet, base_name='ExportPermissions'),
-router.register(r'export/employees', views.EmployeeExportViewSet, base_name='ExportEmployees'),
+router.register(r'export/functionarys', views.FunctionaryExportViewSet, base_name='ExportFunctionarys'),
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

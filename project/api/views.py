@@ -106,32 +106,32 @@ class AuthTokenUserViewSet(APIView):
         """
         return Response(UserSerializer(request.user, context={'request': request}).data)
 
-## Employee
-class EmployeeViewSet(DynamicModelViewSet):
+## Functionary
+class FunctionaryViewSet(DynamicModelViewSet):
     """
     API endpoint that allows permissions to be viewed or edited.
     """
-    queryset = Employee.objects.all()
-    serializer_class = EmployeeSerializer
-    Employee_classes = [IsAuthenticated]
+    queryset = Functionary.objects.all()
+    serializer_class = FunctionarySerializer
+    Functionary_classes = [IsAuthenticated]
     filterset_fields = '__all__'
     permission_classes = [IsAuthenticated]
 
-class EmployeeResource(ModelResource):
+class FunctionaryResource(ModelResource):
     class Meta:
-        model = Employee
+        model = Functionary
 
-class EmployeeExportViewSet(DynamicModelViewSet):
+class FunctionaryExportViewSet(DynamicModelViewSet):
     """
     API endpoint that allows permissions to be viewed or edited.
     """
-    queryset = Employee.objects.all().order_by('-id')
-    serializer_class = EmployeeSerializer
+    queryset = Functionary.objects.all().order_by('-id')
+    serializer_class = FunctionarySerializer
     permission_classes = [IsAuthenticated]
     def list(self, request):
-        resource = EmployeeResource()
+        resource = FunctionaryResource()
         dataset = resource.export()
         response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="employees.xls"'
+        response['Content-Disposition'] = 'attachment; filename="functionarys.xls"'
         return response
 
