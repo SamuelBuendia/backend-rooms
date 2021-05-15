@@ -135,3 +135,32 @@ class FunctionaryExportViewSet(DynamicModelViewSet):
         response['Content-Disposition'] = 'attachment; filename="functionarys.xls"'
         return response
 
+## Room
+class RoomViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows permissions to be viewed or edited.
+    """
+    queryset = Room.objects.all()
+    serializer_class = RoomSerializer
+    Room_classes = [IsAuthenticated]
+    filterset_fields = '__all__'
+    permission_classes = [IsAuthenticated]
+
+class RoomResource(ModelResource):
+    class Meta:
+        model = Room
+
+class RoomExportViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows permissions to be viewed or edited.
+    """
+    queryset = Room.objects.all().order_by('-id')
+    serializer_class = RoomSerializer
+    permission_classes = [IsAuthenticated]
+    def list(self, request):
+        resource = RoomResource()
+        dataset = resource.export()
+        response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="rooms.xls"'
+        return response
+
