@@ -47,6 +47,27 @@ class Functionary(SafeDeleteModel):
     def __str__(self):
         return self.name
 
+## Space
+class Space(SafeDeleteModel):
+    name = models.CharField(max_length=255)
+    number_space = models.CharField(max_length=255, unique=True)
+    description = models.CharField(max_length=255, blank=True, null=True)
+    active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    functionary = models.ForeignKey(Functionary, on_delete=models.CASCADE, null=True, blank=True, related_name='functionaryspace')
+
+    history = HistoricalRecords()
+
+    class Meta:
+        verbose_name = _('space')
+        verbose_name_plural = _('spaces')
+        ordering = ['-id']
+
+    def __str__(self):
+        return self.name
+
 ## Room
 class Room(SafeDeleteModel):
     name = models.CharField(max_length=255)
@@ -57,7 +78,7 @@ class Room(SafeDeleteModel):
     updated_at = models.DateTimeField(auto_now=True)
 
     functionary = models.ForeignKey(Functionary, on_delete=models.CASCADE, null=True, blank=True, related_name='functionaryroom')
-    room_fk = models.ForeignKey('Room', on_delete=models.CASCADE, null=True, blank=True, related_name='roomroom')
+    space = models.ForeignKey(Space, on_delete=models.CASCADE, null=True, blank=True, related_name='spaceroom')
 
     history = HistoricalRecords()
 

@@ -135,6 +135,35 @@ class FunctionaryExportViewSet(DynamicModelViewSet):
         response['Content-Disposition'] = 'attachment; filename="functionarys.xls"'
         return response
 
+## Space
+class SpaceViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows permissions to be viewed or edited.
+    """
+    queryset = Space.objects.all()
+    serializer_class = SpaceSerializer
+    Space_classes = [IsAuthenticated]
+    filterset_fields = '__all__'
+    permission_classes = [IsAuthenticated]
+
+class SpaceResource(ModelResource):
+    class Meta:
+        model = Space
+
+class SpaceExportViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows permissions to be viewed or edited.
+    """
+    queryset = Space.objects.all().order_by('-id')
+    serializer_class = SpaceSerializer
+    permission_classes = [IsAuthenticated]
+    def list(self, request):
+        resource = SpaceResource()
+        dataset = resource.export()
+        response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="space.xls"'
+        return response
+
 ## Room
 class RoomViewSet(DynamicModelViewSet):
     """
