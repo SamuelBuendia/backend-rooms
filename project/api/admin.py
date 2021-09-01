@@ -101,6 +101,18 @@ class FunctionaryAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
 admin.site.register(Functionary, FunctionaryAdmin)
 
+## Space
+class SpacesResource(ModelResource):
+    class Meta:
+        model = Space
+
+class SpaceAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
+    search_fields = ('name',)
+    ordering = ('id',)
+    resource_class = SpacesResource
+
+admin.site.register(Space, SpaceAdmin)
+
 ## Room
 class RoomsResource(ModelResource):
     class Meta:
