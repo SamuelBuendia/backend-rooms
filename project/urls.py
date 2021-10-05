@@ -24,6 +24,7 @@ from django.conf.urls.static import static
 
 router = DynamicRouter()
 router.register(r'users', views.UserViewSet)
+router.register(r'contenttypes', views.ContentTypeViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'permissions', views.PermissionViewSet)
 router.register(r'usersprofile', views.UserProfileViewSet)
@@ -32,6 +33,7 @@ router.register(r'spaces', views.SpaceViewSet, base_name='Spaces')
 router.register(r'rooms', views.RoomViewSet, base_name='Rooms')
 
 router.register(r'export/users', views.UserExportViewSet, base_name='Exportusers'),
+router.register(r'export/contenttypes', views.ContentTypeExportViewSet, base_name='ExportContentTypes'),
 router.register(r'export/permissions', views.PermissionExportViewSet, base_name='ExportPermissions'),
 router.register(r'export/functionarys', views.FunctionaryExportViewSet, base_name='ExportFunctionarys'),
 router.register(r'export/spaces', views.SpaceExportViewSet, base_name='ExportSpaces'),

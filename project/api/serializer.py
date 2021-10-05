@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User, Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from rest_framework.serializers import HyperlinkedModelSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from dynamic_rest.serializers import DynamicModelSerializer
@@ -7,8 +8,15 @@ from dynamic_rest.fields.fields import DynamicRelationField
 from .models import *
 from django.contrib.auth.hashers import make_password
 
+## ContentType
+class ContentTypeSerializer(DynamicModelSerializer):
+    class Meta:
+        model = ContentType
+        fields = "__all__"
+
 ## Permission
 class PermissionSerializer(DynamicModelSerializer):
+    content_type = DynamicRelationField('ContentTypeSerializer', many=False)
     class Meta:
         model = Permission
         fields = "__all__"
@@ -49,8 +57,8 @@ class UserSerializer(DynamicModelSerializer):
         else:
             validated_data.pop('password')
 
-        validated_data.pop('groups')
-        validated_data.pop('user_permissions')
+        # validated_data.pop('groups')
+        # validated_data.pop('user_permissions')
         validated_data.pop('functionary')
         validated_data.pop('userprofile')
         user = super().update(instance, validated_data)

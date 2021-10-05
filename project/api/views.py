@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User, Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
 from project.api.serializer import UserSerializer, GroupSerializer, AuthTokenSerializer, PermissionSerializer
@@ -11,11 +12,13 @@ from django.http import HttpResponse
 from import_export.resources import ModelResource
 from .models import *
 from .serializer import *
+from django.db.models import Q
 from wkhtmltopdf.views import PDFTemplateView
 from django.conf import settings
 from wkhtmltopdf.views import PDFTemplateResponse
 from django.conf import settings
 
+# Permission
 class PermissionViewSet(DynamicModelViewSet):
     """
     API endpoint that allows permissions to be viewed or edited.
@@ -24,39 +27,19 @@ class PermissionViewSet(DynamicModelViewSet):
     serializer_class = PermissionSerializer
     permission_classes = [IsAuthenticated]
 
-class GroupViewSet(DynamicModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
-    permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        search = self.request.query_params.get("filter")
+        if search:
+            fields = [f for f in Permission._meta.fields if not isinstance(f, models.ForeignKey)]
+            queries = [Q(**{f.name + '__icontains': search}) for f in fields]
 
-class UserViewSet(DynamicModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-id')
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+            qs = Q()
+            for query in queries:
+                qs = qs | query
 
-class UsersResource(ModelResource):
-    class Meta:
-        model = User
-
-class UserExportViewSet(DynamicModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-id')
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
-    def list(self, request):
-        users_resource = UsersResource()
-        dataset = users_resource.export()
-        response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="users.xls"'
-        return response
+            return Permission.objects.filter(qs)
+        else:
+            return self.queryset
 
 class PermissionsResource(ModelResource):
     class Meta:
@@ -74,6 +57,145 @@ class PermissionExportViewSet(DynamicModelViewSet):
         dataset = permission_resource.export()
         response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename="permission.xls"'
+        return response
+
+
+# ContentType
+class ContentTypeViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows ContentTypes to be viewed or edited.
+    """
+    queryset = ContentType.objects.all().order_by('-id')
+    serializer_class = ContentTypeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        search = self.request.query_params.get("filter", None)
+
+        if search:
+            fields = [f for f in ContentType._meta.fields if not isinstance(f, models.ForeignKey)]
+            queries = [Q(**{f.name + '__icontains': search}) for f in fields]
+
+            qs = Q()
+            for query in queries:
+                qs = qs | query
+
+            return ContentType.objects.filter(qs)
+        else:
+            return self.queryset
+            
+class ContentTypesResource(ModelResource):
+    class Meta:
+        model = ContentType
+
+class ContentTypeExportViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows ContentTypes to be viewed or edited.
+    """
+    queryset = ContentType.objects.all().order_by('-id')
+    serializer_class = ContentTypeSerializer
+    permission_classes = [IsAuthenticated]
+    def list(self, request):
+        ContentTypes_resource = ContentTypesResource()
+        dataset = ContentTypes_resource.export()
+        response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="ContentTypes.xls"'
+        return response
+
+
+# Group
+class GroupViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        search = self.request.query_params.get("filter", None)
+
+        # fields = [f for f in Group._meta.fields if not isinstance(f, models.ForeignKey)]
+        # queries = [Q(**{f.name + '__icontains': search}) for f in fields]
+
+        # qs = Q()
+        # for query in queries:
+        #     qs = qs | query
+
+        # return Group.objects.filter(qs)
+
+        if search:
+            fields = [f for f in Group._meta.fields if not isinstance(f, models.ForeignKey)]
+            queries = [Q(**{f.name + '__icontains': search}) for f in fields]
+
+            qs = Q()
+            for query in queries:
+                qs = qs | query
+
+            return Group.objects.filter(qs)
+
+        else:
+            return self.queryset
+
+
+class GroupsResource(ModelResource):
+    class Meta:
+        model = Group
+
+class GroupExportViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows permission to be viewed or edited.
+    """
+    queryset = Group.objects.all().order_by('-id')
+    serializer_class = GroupSerializer
+    permission_classes = [IsAuthenticated]
+    def list(self, request):
+        permission_resource = GroupsResource()
+        dataset = permission_resource.export()
+        response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="group.xls"'
+        return response
+
+# User
+class UserViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-id')
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        search = self.request.query_params.get("filter", None)
+
+        if search:
+            fields = [f for f in User._meta.fields if not isinstance(f, models.ForeignKey)]
+            queries = [Q(**{f.name + '__icontains': search}) for f in fields]
+
+            qs = Q()
+            for query in queries:
+                qs = qs | query
+
+            return User.objects.filter(qs)
+        else:
+            return self.queryset
+            
+class UsersResource(ModelResource):
+    class Meta:
+        model = User
+
+class UserExportViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-id')
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+    def list(self, request):
+        users_resource = UsersResource()
+        dataset = users_resource.export()
+        response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="users.xls"'
         return response
 
 class UserProfileViewSet(DynamicModelViewSet):
