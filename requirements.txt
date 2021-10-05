@@ -3,6 +3,7 @@ djangorestframework==3.11.1
 mysqlclient
 djoser
 markdown
+psycopg2==2.8.6
 django-filter
 pygments
 django-cors-headers
