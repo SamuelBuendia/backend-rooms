@@ -14,3 +14,7 @@ django-simple-history
 django-model-utils
 Pillow
 django-wkhtmltopdf
+
+# Heroku
+gunicorn==20.1.0
+django-heroku==0.3.1
