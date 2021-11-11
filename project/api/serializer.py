@@ -85,6 +85,7 @@ class FunctionarySerializer(DynamicModelSerializer):
 ## Space
 class SpaceSerializer(DynamicModelSerializer):
     functionary = DynamicRelationField('FunctionarySerializer', many=False)
+    functionarys = DynamicRelationField('FunctionarySerializer', many=True)
     class Meta:
         model = Space
         fields = '__all__'

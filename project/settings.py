@@ -91,27 +91,27 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'u771810695_rooms_db',
-        'USER': 'u771810695_root',
-        'PASSWORD': 'Pa22w0rd',
-        'HOST': '185.201.11.212',
-        # 'PORT': '3306',
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'rooms_db',
-#         'USER': 'root',
+#         'NAME': 'u771810695_rooms_db',
+#         'USER': 'u771810695_root',
 #         'PASSWORD': 'Pa22w0rd',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
+#         'HOST': '185.201.11.212',
+#         # 'PORT': '3306',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'rooms_db',
+        'USER': 'root',
+        'PASSWORD': 'Pa22w0rd',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

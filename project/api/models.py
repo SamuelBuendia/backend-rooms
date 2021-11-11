@@ -57,6 +57,7 @@ class Space(SafeDeleteModel):
     updated_at = models.DateTimeField(auto_now=True)
 
     functionary = models.ForeignKey(Functionary, on_delete=models.CASCADE, null=True, blank=True, related_name='functionaryspace')
+    functionarys = models.ManyToManyField(Functionary, related_name='spacefunctionarys')
 
     history = HistoricalRecords()
 
