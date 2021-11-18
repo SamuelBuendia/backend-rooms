@@ -124,3 +124,15 @@ class RoomAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
     resource_class = RoomsResource
 
 admin.site.register(Room, RoomAdmin)
+
+## Folder
+class FoldersResource(ModelResource):
+    class Meta:
+        model = Folder
+
+class FolderAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
+    search_fields = ('name',)
+    ordering = ('id',)
+    resource_class = FoldersResource
+
+admin.site.register(Folder, FolderAdmin)

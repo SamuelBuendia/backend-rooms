@@ -97,3 +97,11 @@ class RoomSerializer(DynamicModelSerializer):
     class Meta:
         model = Room
         fields = '__all__'
+
+## Folder
+class FolderSerializer(DynamicModelSerializer):
+    functionary = DynamicRelationField('FunctionarySerializer', many=False)
+    room = DynamicRelationField('RoomSerializer', many=False)
+    class Meta:
+        model = Folder
+        fields = '__all__'

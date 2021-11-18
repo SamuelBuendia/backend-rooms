@@ -90,3 +90,27 @@ class Room(SafeDeleteModel):
 
     def __str__(self):
         return self.name
+
+
+## Folder
+class Folder(SafeDeleteModel):
+    name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, blank=True, null=True)
+    expiration_date = models.DateField(null=True)
+    guide_file = models.FileField(upload_to = "Uploaded Files/", null=True)
+    active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    functionary = models.ForeignKey(Functionary, on_delete=models.CASCADE, null=True, blank=True, related_name='functionaryfolder')
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, blank=True, related_name='folderroom')
+
+    history = HistoricalRecords()
+
+    class Meta:
+        verbose_name = _('folder')
+        verbose_name_plural = _('folders')
+        ordering = ['-id']
+
+    def __str__(self):
+        return self.name

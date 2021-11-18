@@ -315,3 +315,32 @@ class RoomExportViewSet(DynamicModelViewSet):
         response['Content-Disposition'] = 'attachment; filename="rooms.xls"'
         return response
 
+## Folder
+class FolderViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows permissions to be viewed or edited.
+    """
+    queryset = Folder.objects.all()
+    serializer_class = FolderSerializer
+    Folder_classes = [IsAuthenticated]
+    filterset_fields = '__all__'
+    permission_classes = [IsAuthenticated]
+
+class FolderResource(ModelResource):
+    class Meta:
+        model = Folder
+
+class FolderExportViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows permissions to be viewed or edited.
+    """
+    queryset = Folder.objects.all().order_by('-id')
+    serializer_class = FolderSerializer
+    permission_classes = [IsAuthenticated]
+    def list(self, request):
+        resource = FolderResource()
+        dataset = resource.export()
+        response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="rooms.xls"'
+        return response
+
