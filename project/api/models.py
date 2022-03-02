@@ -97,7 +97,7 @@ class Folder(SafeDeleteModel):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     expiration_date = models.DateField(null=True)
-    guide_file = models.FileField(upload_to = "Uploaded Files/", null=True)
+    guide_file = models.FileField(db_column='file_url', blank=True, null=True, upload_to='GuideFile/')
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

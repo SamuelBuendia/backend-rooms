@@ -11,12 +11,14 @@ from dynamic_rest.viewsets import DynamicModelViewSet
 from django.http import HttpResponse
 from import_export.resources import ModelResource
 from .models import *
+import base64
 from .serializer import *
 from django.db.models import Q
 from wkhtmltopdf.views import PDFTemplateView
 from django.conf import settings
 from wkhtmltopdf.views import PDFTemplateResponse
 from django.conf import settings
+from django.core.files.base import ContentFile
 
 # Permission
 class PermissionViewSet(DynamicModelViewSet):
@@ -325,6 +327,60 @@ class FolderViewSet(DynamicModelViewSet):
     Folder_classes = [IsAuthenticated]
     filterset_fields = '__all__'
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        search = self.request.query_params.get("filter", None)
+
+        if search:
+            fields = [f for f in Folder._meta.fields if not isinstance(f, models.ForeignKey)]
+            queries = [Q(**{f.name + '__icontains': search}) for f in fields]
+
+            qs = Q()
+            for query in queries:
+                qs = qs | query
+
+            return Folder.objects.filter(qs)
+        else:
+            return self.queryset
+
+    def create(self, request):
+        folder = Folder.objects.create(
+            name = request.data.get('name'), 
+            description = request.data.get('description'),
+            expiration_date = request.data.get('expiration_date'),
+            active = request.data.get('active'),
+            functionary = Functionary.objects.get(id=request.data.get('functionary')),
+            room = Room.objects.get(id=request.data.get('room'))
+        )
+
+        if request.data.get('guide_file'):
+            format, fileStr = request.data.get('guide_file').split(';base64,')
+            ext = format.split('/')[-1]
+            file = base64.b64decode(fileStr)
+            fileName = str(folder.id) + '.' + ext
+            folder.guide_file.save(fileName, ContentFile(file), save=True)
+            folder.save()
+        return HttpResponse(status=200, content_type="application/json")
+
+    def partial_update(self, request, pk=None):
+        folder = Folder.objects.get(id=pk)
+        folder.name = request.data.get('name')
+        folder.description = request.data.get('description')
+        folder.expiration_date = request.data.get('expiration_date')
+        folder.active = request.data.get('active')
+        folder.functionary = Functionary.objects.get(id=request.data.get('functionary'))
+        folder.room = Room.objects.get(id=request.data.get('room'))
+        folder.save()
+        if request.data.get('guide_file'):
+            format, fileStr = request.data.get('guide_file').split(';base64,')
+            ext = format.split('/')[-1]
+            file = base64.b64decode(fileStr)
+            fileName = str(folder.id) + '.' + ext
+            folder.guide_file.save(fileName, ContentFile(file), save=True)
+            folder.save()
+
+        return HttpResponse(status=200, content_type="application/json")
+
 
 class FolderResource(ModelResource):
     class Meta:
