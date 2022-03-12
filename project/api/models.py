@@ -45,7 +45,7 @@ class Functionary(SafeDeleteModel):
         ordering = ['-id']
 
     def __str__(self):
-        return self.name
+        return str(self.id)
 
 ## Space
 class Space(SafeDeleteModel):
@@ -67,7 +67,7 @@ class Space(SafeDeleteModel):
         ordering = ['-id']
 
     def __str__(self):
-        return self.name
+        return str(self.id)
 
 ## Room
 class Room(SafeDeleteModel):
@@ -89,7 +89,7 @@ class Room(SafeDeleteModel):
         ordering = ['-id']
 
     def __str__(self):
-        return self.name
+        return str(self.id)
 
 
 ## Folder
@@ -114,3 +114,29 @@ class Folder(SafeDeleteModel):
 
     def __str__(self):
         return self.name
+
+
+## Evidence
+class Evidence(SafeDeleteModel):
+    re_expiration_date = models.DateTimeField(null=True)
+    active = models.BooleanField(default=True)
+    qualification = models.CharField(max_length=255, null=True)
+    observation = models.TextField(blank=True, null=True)
+    evidence_link = models.CharField(max_length=255, null=True )
+    evidence_file = models.FileField(db_column='file_url', blank=True, null=True, upload_to='EvidenceFile/')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    folder = models.ForeignKey(Folder, on_delete=models.CASCADE, null=True, blank=True, related_name='folderevidence')
+    teacher = models.ForeignKey(Functionary, on_delete=models.CASCADE, null=True, blank=True, related_name='teacherevidence')
+    functionary = models.ForeignKey(Functionary, on_delete=models.CASCADE, null=True, blank=True, related_name='functionaryevidence')
+
+    history = HistoricalRecords()
+
+    class Meta:
+        verbose_name = _('evidence')
+        verbose_name_plural = _('evidences')
+        ordering = ['-id']
+
+    def __str__(self):
+        return str(self.id)

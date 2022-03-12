@@ -360,6 +360,25 @@ class FolderViewSet(DynamicModelViewSet):
             fileName = str(folder.id) + '.' + ext
             folder.guide_file.save(fileName, ContentFile(file), save=True)
             folder.save()
+        
+        # Obtengo el Room según el id que mandé desde el front.
+        folderRoom = Room.objects.filter(id=request.data.get('room'))
+
+        # Obtengo el space_id de el Room.
+        filterSpace = folderRoom[0].space_id
+
+        # Busco en la tabla secundaria (porque es un ManyToMany) los registros de funcionarios segun el id del espacio.
+        folderFunctionarys = Functionary.objects.filter(spacefunctionarys=str(filterSpace)).all()
+
+        # Creo cuantas evidencias como funcionarios hayan. 
+        for obj in folderFunctionarys:
+            evidence = Evidence.objects.create()
+            evidence.re_expiration_date = request.data.get('expiration_date')
+            evidence.folder_id = folder.id
+            evidence.functionary_id = obj.id
+            evidence.teacher_id = request.data.get('functionary')
+            evidence.save()
+
         return HttpResponse(status=200, content_type="application/json")
 
     def partial_update(self, request, pk=None):
@@ -379,7 +398,14 @@ class FolderViewSet(DynamicModelViewSet):
             folder.guide_file.save(fileName, ContentFile(file), save=True)
             folder.save()
 
-        return HttpResponse(status=200, content_type="application/json")
+        evidences = Evidence.objects.filter(folder_id=request.data.get('id')).all()
+
+        for evidende in evidences:
+            evidende.re_expiration_date = request.data.get('expiration_date')
+            evidende.active = request.data.get('active')
+            evidende.save()
+
+        return HttpResponse(status=200, content_type="application/json") 
 
 
 class FolderResource(ModelResource):
@@ -398,5 +424,92 @@ class FolderExportViewSet(DynamicModelViewSet):
         dataset = resource.export()
         response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename="rooms.xls"'
+        return response
+
+
+## Evidence
+class EvidenceViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows permissions to be viewed or edited.
+    """
+    queryset = Evidence.objects.all()
+    serializer_class = EvidenceSerializer
+    Evidence_classes = [IsAuthenticated]
+    filterset_fields = '__all__'
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        search = self.request.query_params.get("filter", None)
+
+        if search:
+            fields = [f for f in Evidence._meta.fields if not isinstance(f, models.ForeignKey)]
+            queries = [Q(**{f.name + '__icontains': search}) for f in fields]
+
+            qs = Q()
+            for query in queries:
+                qs = qs | query
+
+            return Evidence.objects.filter(qs)
+        else:
+            return self.queryset
+
+    def create(self, request):
+        evidence = Evidence.objects.create(
+            re_expiration_date = request.data.get('re_expiration_date'),
+            active = request.data.get('active'),
+            qualification = request.data.get('qualification'),
+            observation = request.data.get('observation'),
+            evidence_link = request.data.get('evidence_link'),
+
+            functionary = Functionary.objects.get(id=request.data.get('functionary')),
+            folder = Folder.objects.get(id=request.data.get('folder'))
+        )
+
+        if request.data.get('evidence_file'):
+            format, fileStr = request.data.get('evidence_file').split(';base64,')
+            ext = format.split('/')[-1]
+            file = base64.b64decode(fileStr)
+            fileName = str(evidence.id) + '.' + ext
+            evidence.evidence_file.save(fileName, ContentFile(file), save=True)
+            evidence.save()
+        return HttpResponse(status=200, content_type="application/json")
+
+    def partial_update(self, request, pk=None):
+        evidence = Evidence.objects.get(id=pk)
+        evidence.re_expiration_date = request.data.get('re_expiration_date'),
+        evidence.active = request.data.get('active'),
+        evidence.qualification = request.data.get('qualification'),
+        evidence.observation = request.data.get('observation'),
+        evidence.evidence_link = request.data.get('evidence_link'),
+        evidence.functionary = Functionary.objects.get(id=request.data.get('functionary'))
+        evidence.folder = Folder.objects.get(id=request.data.get('folder'))
+        evidence.save()
+        if request.data.get('evidence_file'):
+            format, fileStr = request.data.get('evidence_file').split(';base64,')
+            ext = format.split('/')[-1]
+            file = base64.b64decode(fileStr)
+            fileName = str(evidence.id) + '.' + ext
+            evidence.evidence_file.save(fileName, ContentFile(file), save=True)
+            evidence.save()
+
+        return HttpResponse(status=200, content_type="application/json")
+
+
+class EvidenceResource(ModelResource):
+    class Meta:
+        model = Evidence
+
+class EvidenceExportViewSet(DynamicModelViewSet):
+    """
+    API endpoint that allows permissions to be viewed or edited.
+    """
+    queryset = Evidence.objects.all().order_by('-id')
+    serializer_class = EvidenceSerializer
+    permission_classes = [IsAuthenticated]
+    def list(self, request):
+        resource = EvidenceResource()
+        dataset = resource.export()
+        response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="evidence.xls"'
         return response
 

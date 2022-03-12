@@ -105,3 +105,12 @@ class FolderSerializer(DynamicModelSerializer):
     class Meta:
         model = Folder
         fields = '__all__'
+
+## Evidence
+class EvidenceSerializer(DynamicModelSerializer):
+    functionary = DynamicRelationField('FunctionarySerializer', many=False)
+    teacher = DynamicRelationField('FunctionarySerializer', many=False)
+    folder = DynamicRelationField('FolderSerializer', many=False)
+    class Meta:
+        model = Evidence
+        fields = '__all__'

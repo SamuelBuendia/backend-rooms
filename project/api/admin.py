@@ -107,7 +107,7 @@ class SpacesResource(ModelResource):
         model = Space
 
 class SpaceAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
-    search_fields = ('name',)
+    search_fields = ( 'name', 'functionarys__space_id', )
     ordering = ('id',)
     resource_class = SpacesResource
 
@@ -136,3 +136,15 @@ class FolderAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
     resource_class = FoldersResource
 
 admin.site.register(Folder, FolderAdmin)
+
+## Evidence
+class EvidencesResource(ModelResource):
+    class Meta:
+        model = Evidence
+
+class EvidenceAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
+    search_fields = ('name',)
+    ordering = ('id',)
+    resource_class = EvidencesResource
+
+admin.site.register(Evidence, EvidenceAdmin)

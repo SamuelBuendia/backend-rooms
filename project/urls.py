@@ -32,6 +32,7 @@ router.register(r'functionarys', views.FunctionaryViewSet, base_name='Functionar
 router.register(r'spaces', views.SpaceViewSet, base_name='Spaces')
 router.register(r'rooms', views.RoomViewSet, base_name='Rooms')
 router.register(r'folders', views.FolderViewSet, base_name='Folders')
+router.register(r'evidences', views.EvidenceViewSet, base_name='Evidences')
 
 router.register(r'export/users', views.UserExportViewSet, base_name='Exportusers'),
 router.register(r'export/contenttypes', views.ContentTypeExportViewSet, base_name='ExportContentTypes'),
@@ -40,6 +41,7 @@ router.register(r'export/functionarys', views.FunctionaryExportViewSet, base_nam
 router.register(r'export/spaces', views.SpaceExportViewSet, base_name='ExportSpaces'),
 router.register(r'export/rooms', views.RoomExportViewSet, base_name='ExportRooms'),
 router.register(r'export/folders', views.FolderExportViewSet, base_name='ExportFolders'),
+router.register(r'export/evidences', views.EvidenceExportViewSet, base_name='ExportEvidences'),
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
