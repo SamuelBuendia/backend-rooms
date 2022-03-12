@@ -460,7 +460,6 @@ class EvidenceViewSet(DynamicModelViewSet):
             qualification = request.data.get('qualification'),
             observation = request.data.get('observation'),
             evidence_link = request.data.get('evidence_link'),
-
             functionary = Functionary.objects.get(id=request.data.get('functionary')),
             folder = Folder.objects.get(id=request.data.get('folder'))
         )
@@ -476,14 +475,15 @@ class EvidenceViewSet(DynamicModelViewSet):
 
     def partial_update(self, request, pk=None):
         evidence = Evidence.objects.get(id=pk)
-        evidence.re_expiration_date = request.data.get('re_expiration_date'),
-        evidence.active = request.data.get('active'),
-        evidence.qualification = request.data.get('qualification'),
-        evidence.observation = request.data.get('observation'),
-        evidence.evidence_link = request.data.get('evidence_link'),
+        evidence.re_expiration_date = request.data.get('re_expiration_date')
+        evidence.active = request.data.get('active')
+        evidence.qualification = request.data.get('qualification')
+        evidence.observation = request.data.get('observation')
+        evidence.evidence_link = request.data.get('evidence_link')
         evidence.functionary = Functionary.objects.get(id=request.data.get('functionary'))
         evidence.folder = Folder.objects.get(id=request.data.get('folder'))
         evidence.save()
+
         if request.data.get('evidence_file'):
             format, fileStr = request.data.get('evidence_file').split(';base64,')
             ext = format.split('/')[-1]
